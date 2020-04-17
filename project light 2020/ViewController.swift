@@ -6,6 +6,7 @@
 //  Copyright © 2020 Alisher Batyrkanov. All rights reserved.
 //
 
+import AVFoundation
 import UIKit
 
 class ViewController: UIViewController {
@@ -19,19 +20,39 @@ class ViewController: UIViewController {
     }
     
     func updateUI() {
-        view.backgroundColor = lightOn ? .white : .black
+        let device = AVCaptureDevice.default(for: AVMediaType.video)
+        
+        if let dev = device, dev.hasTorch {
+            view.backgroundColor = .black
+            do {
+                try dev.lockForConfiguration()
+                    dev.torchMode = lightOn ? .on : .off
+                    dev.unlockForConfiguration()
+            } catch {
+               print(error)
+            }
+        } else {
+                view.backgroundColor = lightOn ? .white : .black
+            }
+        
+        }
+       
 //        if lightOn {
 //            view.backgroundColor = .white
 //        } else {
 //            view.backgroundColor = .black
 //        }
+//    }
+    
+override var prefersStatusBarHidden: Bool {
+        return true
     }
+
     
-    
-    override func viewDidLoad() {
+override func viewDidLoad() {
         super.viewDidLoad()
         
-        updateUI()
+      //  updateUI()
         
         
     }
